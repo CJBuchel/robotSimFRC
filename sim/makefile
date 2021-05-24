@@ -2,11 +2,10 @@
 
 CC = g++
 PROG = sim
-ENTRY = src/main/cpp/entry/main.cpp
 
 # Dirs
-CPP = src/main/cpp/*.cpp
-HEADERS = -Isrc/main/include
+CPP = libs/main/cpp**/*.cpp src/cpp**/*.cpp
+HEADERS = -Ilibs/main/include -Isrc/include
 CFLAGS = -pthread
 
 #OPENCV
@@ -21,7 +20,7 @@ OUTDIR = build
 
 LOCAL_DEFS = 
 
-COMPILE = $(CC) $(CFLAGS) -o $(OUTDIR)/$(PROG) $(HEADERS) $(ENTRY) $(CPP)
+COMPILE = $(CC) $(CFLAGS) -o $(OUTDIR)/$(PROG) $(HEADERS) $(CPP)
 
 all:
 	$(MAKE) all4 || $(MAKE) all1
