@@ -1,11 +1,11 @@
 #include "headers.h"
-#include "Window.h"
-#include "Config.h"
+#include "visuals/Window.h"
+#include "SimData.h"
 
 class Sim {
  public:
 	Sim() {
-		window = new Window(config.window.Height, config.window.Width, config.window.name);
+		window = new Window(simData.window.Height, simData.window.Width, simData.window.name);
 	}
 
 	~Sim() {
@@ -16,11 +16,11 @@ class Sim {
 	void Init();
 	void OnUpdate();
 
-	Config &getConfig() { return config; }
+	SimData &getSimData() { return simData; }
 	Window *getWindow() { return window; }
 
  private:
 	// DONT TOUCH (MAIN WINDOW)
-	Config config;
+	SimData simData;
 	Window *window;
 };

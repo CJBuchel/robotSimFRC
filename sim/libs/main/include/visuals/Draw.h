@@ -28,7 +28,6 @@ class Draw {
 				{vertices[(i+1)%4].x, vertices[(i+1)%4].y}
 			);
 		}
-		// cv::rectangle(this->_img, cv::Point(tl.x, tl.y), cv::Point(br.x, br.y), cv::Scalar(255,255,255));
 	}
 
 	void drawInfoText(std::string info) {

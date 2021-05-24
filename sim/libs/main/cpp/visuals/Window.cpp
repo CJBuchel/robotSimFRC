@@ -1,4 +1,4 @@
-#include "Window.h"
+#include "visuals/Window.h"
 
 Window::Window(double height, double width, std::string name) : Draw(_window) {
 	this->_height = height;

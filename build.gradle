@@ -7,13 +7,18 @@ plugins {
 	id "cpp"
 }
 
+def windows = false
 
 model {
 	components {
 		robotSim(NativeExecutableSpec) {
-			if (!isFamily(FAMILY_WINDOWS)) {
+
+			if (windows) {
+				println "Windows build..."
+			} else {
 				return
 			}
+
 			targetPlatform wpi.platforms.desktop
 
 			sources.cpp {
@@ -55,14 +60,20 @@ task runUnixMac(type:Exec) {
 	commandLine './sim'
 }
 
-if (isFamily(FAMILY_WINDOWS)) {
+if (hasProperty("windows")) {
+	// Compile using gradle regardless of OS
+	windows = true
 	task SIM(dependsOn: "simulateRobotSimDebugExecutable")
-} else if (isFamily(FAMILY_UNIX) || isFamily(FAMILY_MAC)) {
-	build.finalizedBy(buildUnixMac)
-	runUnixMac.dependsOn(buildUnixMac)
-	task SIM(dependsOn: "runUnixMac")
-} else {
-	ant.fail("Unknown platform detected")
+} else { // Use auto detect
+	if (isFamily(FAMILY_WINDOWS)) {
+		task SIM(dependsOn: "simulateRobotSimDebugExecutable")
+	} else if (isFamily(FAMILY_UNIX) || isFamily(FAMILY_MAC)) {
+		build.finalizedBy(buildUnixMac)
+		runUnixMac.dependsOn(buildUnixMac)
+		task SIM(dependsOn: "runUnixMac")
+	} else {
+		ant.fail("Unknown platform detected")
+	}
 }
 
 wrapper {

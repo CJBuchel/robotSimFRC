@@ -8,6 +8,8 @@
 #include <string>
 #include <stdio.h>
 #include <stdarg.h>
+#include <chrono>
+using namespace std::chrono;
 
 /**
  * OpenCV

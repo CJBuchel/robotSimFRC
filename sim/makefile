@@ -4,7 +4,10 @@ CC = g++
 PROG = sim
 
 # Dirs
-CPP = libs/main/cpp**/*.cpp src/cpp**/*.cpp
+CPP_LIBS = libs/main/cpp*/**/*.cpp libs/main/cpp*/*.cpp 
+CPP_SIM = src/cpp*/*.cpp
+
+CPP = $(CPP_LIBS) $(CPP_SIM)
 HEADERS = -Ilibs/main/include -Isrc/include
 CFLAGS = -pthread
 

@@ -1,6 +1,6 @@
 #include <string.h>
 
-struct Config {
+struct SimData {
 
 	/**
 	 * Simulator Window

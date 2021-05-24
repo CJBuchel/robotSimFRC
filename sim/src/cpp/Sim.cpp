@@ -7,7 +7,7 @@ int count;
  * Initializer (Happens once)
  */
 void Sim::Init() {
-	config.window.FPS = 0; // Unlockes FPS
+	simData.window.FPS = 500; // Unlockes FPS
 	angle = 0;
 }
 
