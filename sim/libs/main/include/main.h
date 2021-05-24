@@ -5,5 +5,6 @@
 #include "Sim.h"
 
 bool running = false;
+Sim sim; // Main sim instance
 
 #endif

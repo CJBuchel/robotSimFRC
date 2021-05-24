@@ -19,7 +19,7 @@ class Draw {
 	}
 
 	void drawRect(dw_point centerCoord, int width, int height, double angle) {
-		cv::RotatedRect rect = cv::RotatedRect(cv::Point2f(centerCoord.x, centerCoord.y), cv::Size2f(width, height), angle);
+		cv::RotatedRect rect = cv::RotatedRect(cv::Point2f(centerCoord.y, centerCoord.x), cv::Size2f(width, height), angle);
 		cv::Point2f vertices[4];
 		rect.points(vertices);
 		for (int i = 0; i < 4; i++) {
@@ -31,6 +31,24 @@ class Draw {
 		// cv::rectangle(this->_img, cv::Point(tl.x, tl.y), cv::Point(br.x, br.y), cv::Scalar(255,255,255));
 	}
 
+	void drawInfoText(std::string info) {
+
+		cv::putText(
+			this->_img,
+			info,
+			cv::Point(10,15*infoCount),
+			cv::FONT_HERSHEY_PLAIN,
+			1,
+			cv::Scalar(255,255,255),
+			1
+		);
+
+		infoCount++;
+	}
+
+	void resetInfoCounter() { infoCount = 1; }
+
  private:
 	cv::Mat &_img;
+	int infoCount = 1; // Number of text drawn in top left
 };

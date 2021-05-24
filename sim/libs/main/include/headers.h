@@ -4,6 +4,7 @@
 /**
  * System headers
  */
+#include <iostream>
 #include <string>
 #include <stdio.h>
 #include <stdarg.h>

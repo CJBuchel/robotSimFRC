@@ -16,6 +16,10 @@ class Sim {
 	void Init();
 	void OnUpdate();
 
+	Config &getConfig() { return config; }
+	Window *getWindow() { return window; }
+
+ private:
 	// DONT TOUCH (MAIN WINDOW)
 	Config config;
 	Window *window;

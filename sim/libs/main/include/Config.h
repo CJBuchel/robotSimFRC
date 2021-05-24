@@ -7,9 +7,12 @@ struct Config {
 	 */
 	struct Window {
 		int Width = 1600, Height = 800; // Size of feild in cm
-		int FPS = 60; // Frames per second for simulator
+		double FPS = 60; // Frames per second for simulator
 		std::string name = "Robot Simulation";
 	}; Window window;
+
+
+	// Window &getWindow() { return window; }
 
 
 	struct Robot {

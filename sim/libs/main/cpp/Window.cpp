@@ -13,4 +13,5 @@ void Window::update() {
 
 void Window::reset() {
 	this->_window = cv::Mat::zeros(this->_height, this->_width, CV_8UC3);
+	resetInfoCounter();
 }

@@ -6,30 +6,35 @@
 #include <stdlib.h>
 #include "main.h"
 
+void FPSController() {
+	// Determin FPS of program (ish)
+	double ms = 1000/sim.getConfig().window.FPS; // 60 FPS = 16.6ms every cycle
+	if (sim.getConfig().window.FPS == 0) {
+		ms = 1;
+	}
+
+	// Use waitkey to wait and detect if user inputs esc
+	if (cv::waitKey(ms) == 27) {
+		running = false;
+	}
+}
+
 int main(int argc, char const *argv[]) {
 	std::cout << "Simulator Start [PRESS ESC TO EXIT]" << std::endl;
 	running = true;
 	std::cout << "Creating window..." << std::endl;
-	Sim sim;
 
 	// Initialize Simulator
 	sim.Init();
 
 	while (running) {
-		sim.window->reset();
 		sim.OnUpdate();
-		sim.window->update();
-
-		// Determin FPS of program (ish)
-		double ms = 1000/sim.config.window.FPS; // 60 FPS = 16.6ms every cycle
-		if (sim.config.window.FPS == 0) {
-			ms = 1;
-		}
-
-		// Use waitkey to wait and detect if user inputs esc
-		if (cv::waitKey(ms) == 27) {
-			running = false;
-		}
+		sim.getWindow()->update();
+		sim.getWindow()->reset();
+		
+		sim.getWindow()->drawInfoText("FPS: " + std::to_string(sim.getConfig().window.FPS));
+		sim.getWindow()->drawInfoText("Window Size: " + std::to_string(sim.getConfig().window.Width) + "x" + std::to_string(sim.getConfig().window.Height));
+		FPSController();
 	}
 
 	std::cout << "Program end" << std::endl;
