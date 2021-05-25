@@ -18,6 +18,8 @@ class Robot {
 		_window.drawRect({_x, _y}, SimData::Robot::width, SimData::Robot::length, _angle);
 	}
 
+	
+
  private:
 	Window &_window;
 
