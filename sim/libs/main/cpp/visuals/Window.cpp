@@ -12,6 +12,12 @@ void Window::update() {
 }
 
 void Window::reset() {
-	this->_window = cv::Mat::zeros(this->_height, this->_width, CV_8UC3);
+	if (SimData::Window::field == 0) {
+		this->_window = cv::Mat::zeros(this->_height, this->_width, CV_8UC3);
+	} else {
+		std::string year = std::to_string(SimData::Window::field);
+		this->_window = cv::imread(year + ".png", cv::IMREAD_COLOR);
+		cv::resize(this->_window, this->_window, cv::Size(this->_width, this->_height));
+	}
 	resetInfoCounter();
 }

@@ -37,4 +37,4 @@ all4:
 	$(COMPILE) $(LIBS4) $(LOCAL_DEFS)
 
 clean:
-	rm -rf $(OUTDIR)/$(PROG)
+	rm -rf $(OUTDIR)
