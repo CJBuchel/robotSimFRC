@@ -15,10 +15,11 @@ class Robot {
 	}
 
 	void update() {
+		_angle += 1;
 		_window.drawRect({_x, _y}, SimData::Robot::width, SimData::Robot::length, _angle);
 	}
 
-	
+
 
  private:
 	Window &_window;

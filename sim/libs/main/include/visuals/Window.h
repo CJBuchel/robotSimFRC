@@ -25,6 +25,9 @@ class Window : public Draw {
 
  private:
 	cv::Mat _window; // Main window
+	cv::Mat _background; // Background image
+	cv::Mat _output; // Blended output
+	
 	std::string _name;
 	double _height, _width;
 };

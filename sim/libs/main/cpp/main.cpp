@@ -30,9 +30,9 @@ int main(int argc, char const *argv[]) {
 	auto start = high_resolution_clock::now(); // Start timer
 	auto stop = high_resolution_clock::now(); // End timer
 	auto duration = duration_cast<milliseconds>(stop - start); // Duration since start
-	double currentTime, lastTime, dt, dt_counted, avg_dt; // Time values
+	double currentTime = 0, lastTime = 0, dt = 0, dt_counted, avg_dt = 0; // Time values
 	double count = 0; // Cycle counter, resets every second
-	double ACTUAL_CPS, cycles; // cycles per second
+	double ACTUAL_CPS = 0, cycles = 0; // cycles per second
 
 	while (running) {
 		currentTime = duration.count();
@@ -56,6 +56,7 @@ int main(int argc, char const *argv[]) {
 		controller.window->drawInfoText("Avg Delta time/s: " + std::to_string(avg_dt) + " Actual Delta time: " + std::to_string(dt));
 		controller.window->drawInfoText("Counter: " + std::to_string(count));
 		controller.window->drawInfoText("Window Size: " + std::to_string(WindowData::Width) + "x" + std::to_string(WindowData::Height));
+
 		FPSController();
 
 		stop = high_resolution_clock::now();
