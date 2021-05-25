@@ -3,10 +3,14 @@
  */
 #include "main.h"
 
+using WindowData = SimData::Window;
+using RobotData = SimData::Robot;
+
+
 void FPSController() {
 	// Determin FPS of program (ish)
-	double ms = 1000/sim.getSimData().window.FPS; // 60 FPS = 16.6ms every cycle
-	if (sim.getSimData().window.FPS == 0) {
+	double ms = 1000/SimData::Window::CPS; // 60 CPS = 16.6ms every cycle
+	if (SimData::Window::CPS == 0) {
 		ms = 1;
 	}
 
@@ -19,43 +23,62 @@ void FPSController() {
 int main(int argc, char const *argv[]) {
 	std::cout << "Simulator Start [PRESS ESC TO EXIT]" << std::endl;
 	running = true;
-	std::cout << "Creating window..." << std::endl;
 
 	// Initialize Simulator
-	sim.Init();
+	controller.sim->Init();
 
 	auto start = high_resolution_clock::now(); // Start timer
 	auto stop = high_resolution_clock::now(); // End timer
-	auto duration = duration_cast<milliseconds>(stop - start);
-	double currentTime, lastTime, dt;
+	auto duration = duration_cast<milliseconds>(stop - start); // Duration since start
+	double currentTime, lastTime, dt, dt_counted, avg_dt; // Time values
+	double count = 0; // Cycle counter, resets every second
+	double ACTUAL_CPS, cycles; // cycles per second
 
-	double count = 0;
-	double ACTUAL_CPS, cycles;
 	while (running) {
 		currentTime = duration.count();
 		dt = currentTime - lastTime;
 
-		sim.OnUpdate();
-		sim.getWindow()->update();
-		sim.getWindow()->reset();
+
+		/**
+		 * -------- UPDATE SIMULATOR -------
+		 */
+		controller.sim->OnUpdate();
+		controller.robot->update();
+
+		/**
+		 * ------ END UPDATE SIMULATOR ------
+		 */
+
+		controller.window->update();
+		controller.window->reset();
 		
-		sim.getWindow()->drawInfoText("Set CPS: " + std::to_string(sim.getSimData().window.FPS) + " Actual CPS: " + std::to_string(ACTUAL_CPS));
-		sim.getWindow()->drawInfoText("Delta time: " + std::to_string(dt));
-		sim.getWindow()->drawInfoText("Counter: " + std::to_string(count));
-		sim.getWindow()->drawInfoText("Window Size: " + std::to_string(sim.getSimData().window.Width) + "x" + std::to_string(sim.getSimData().window.Height));
+		controller.window->drawInfoText("Set CPS: " + std::to_string(WindowData::CPS) + " Actual CPS: " + std::to_string(ACTUAL_CPS));
+		controller.window->drawInfoText("Avg Delta time/s: " + std::to_string(avg_dt) + " Actual Delta time: " + std::to_string(dt));
+		controller.window->drawInfoText("Counter: " + std::to_string(count));
+		controller.window->drawInfoText("Window Size: " + std::to_string(WindowData::Width) + "x" + std::to_string(WindowData::Height));
 		FPSController();
-		std::cout << "Dt: " << dt << std::endl;
 
 		stop = high_resolution_clock::now();
 		duration = duration_cast<milliseconds>(stop - start);
 
-		count += dt;
-		cycles += 1;
 		if (count >= 1000) {
+
+			// Calc CPS
 			count = 0;
 			ACTUAL_CPS = cycles;
+
+			// Calc avg dt
+			avg_dt = dt_counted/1000;
+
+			// Reset values for next second cycle
+			dt_counted = 0;
 			cycles = 0;
 		}
+
+		// Value counters
+		count += dt;
+		cycles += 1;
+		dt_counted += dt;
 		lastTime = currentTime;
 	}
 

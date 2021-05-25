@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include <chrono>
+#include <vector>
 using namespace std::chrono;
 
 /**
@@ -22,5 +23,10 @@ using namespace std::chrono;
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/core/core.hpp>
 #include <opencv2/core/types.hpp>
+
+/**
+ * Locals
+ */
+#include "SimData.h"
 
 #endif

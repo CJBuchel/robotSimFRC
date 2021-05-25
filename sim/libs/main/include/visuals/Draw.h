@@ -24,7 +24,7 @@ class Draw {
 		rect.points(vertices);
 		for (int i = 0; i < 4; i++) {
 			drawLine(
-				{vertices[i].x, vertices[i].y}, 
+				{vertices[i].x, vertices[i].y},
 				{vertices[(i+1)%4].x, vertices[(i+1)%4].y}
 			);
 		}

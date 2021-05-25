@@ -7,7 +7,6 @@ int count;
  * Initializer (Happens once)
  */
 void Sim::Init() {
-	simData.window.FPS = 500; // Unlockes FPS
 	angle = 0;
 }
 
@@ -15,6 +14,6 @@ void Sim::Init() {
  * Periodic Update
  */
 void Sim::OnUpdate() {
-	window->drawRect({400,800}, 100, 100, angle);
+	getWindow().drawRect({400,800}, 100, 100, angle);
 	angle++;
 }
