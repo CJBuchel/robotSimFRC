@@ -8,6 +8,7 @@ plugins {
 }
 
 def windows = false
+def installDir = "install\\robotSim\\debug\\lib"
 
 model {
 	components {
@@ -47,19 +48,19 @@ model {
 }
 
 task moveBackgrounds2Debug(type:Copy) {
-	from "$project.rootDir\\background_images"
+	from "background_images"
 	include "*.png"
-	into layout.buildDirectory.dir("exe/robotSim/debug")
+	into layout.buildDirectory.dir("install\\robotSim\\debug\\lib")
 }
 
 task moveBackgrounds2Release(type:Copy) {
-	from "$project.rootDir\\background_images"
+	from "background_images"
 	include "*.png"
-	into layout.buildDirectory.dir("exe/robotSim/release")
+	into layout.buildDirectory.dir("install\\robotSim\\debug\\lib")
 }
 
 task moveBackgrounds2Build(type:Copy) {
-	from "$project.rootDir/background_images"
+	from "background_images"
 	include "*.png"
 	into "sim/build/"
 }
@@ -90,9 +91,12 @@ task runUnixMac(type:Exec) {
 // WINDOWS
 if (hasProperty("windows") || isFamily(FAMILY_WINDOWS)) {
 	windows = true
-	build.finalizedBy(moveBackgrounds2Debug)
-	build.finalizedBy(moveBackgrounds2Release)
-	task SIM(dependsOn: "simulateRobotSimDebugExecutable")
+	task SIM(dependsOn: "build")
+	SIM.dependsOn("installRobotSimDebugExecutable")
+
+	SIM.finalizedBy(moveBackgrounds2Debug)
+	SIM.finalizedBy(moveBackgrounds2Release)
+	SIM.finalizedBy("simulateRobotSimDebugExecutable")
 
 	// UNIX/MAC
 } else if (isFamily(FAMILY_UNIX) || isFamily(FAMILY_MAC)) {
