@@ -47,19 +47,19 @@ model {
 }
 
 task moveBackgrounds2Debug(type:Copy) {
-	from "background_images"
+	from "$project.rootDir\\background_images"
 	include "*.png"
 	into layout.buildDirectory.dir("exe/robotSim/debug")
 }
 
 task moveBackgrounds2Release(type:Copy) {
-	from "background_images"
+	from "$project.rootDir\\background_images"
 	include "*.png"
 	into layout.buildDirectory.dir("exe/robotSim/release")
 }
 
 task moveBackgrounds2Build(type:Copy) {
-	from "background_images"
+	from "$project.rootDir/background_images"
 	include "*.png"
 	into "sim/build/"
 }
