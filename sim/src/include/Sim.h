@@ -1,0 +1,15 @@
+#include "headers.h"
+#include "visuals/Window.h"
+
+class Sim {
+ public:
+	Sim(Window &window) : _window(window) {}
+
+	void Init();
+	void OnUpdate();
+
+	Window &getWindow() { return _window; }
+
+ private:
+	Window &_window;
+};

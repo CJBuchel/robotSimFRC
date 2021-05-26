@@ -1,0 +1,119 @@
+import static org.apache.tools.ant.taskdefs.condition.Os.*
+
+plugins {
+	id "edu.wpi.first.GradleRIO" version "2021.3.1"
+	id "google-test-test-suite"
+	id "groovy"
+	id "cpp"
+}
+
+def windows = false
+def installDir = "install\\robotSim\\debug\\lib"
+
+model {
+	components {
+		robotSim(NativeExecutableSpec) {
+
+			if (windows) {
+				println "Windows build..."
+			} else {
+				return
+			}
+
+			targetPlatform wpi.platforms.desktop
+
+			sources.cpp {
+				source {
+					srcDir 'sim/libs/main/cpp'
+					srcDir 'sim/src/cpp'
+					include '**/*.cpp', '**/*.cc'
+				}
+				exportedHeaders {
+					srcDir 'sim/libs/main/include'
+					srcDir 'sim/src/include'
+				}
+			}
+
+			binaries.all {
+				if (targetPlatform.name == wpi.platforms.desktop) {
+					cppCompiler.define '__DESKTOP__'
+				}
+			}
+
+			wpi.deps.wpilib(it)
+			wpi.deps.googleTest(it)
+			wpi.deps.vendor.cpp(it)
+		}
+	}
+}
+
+task moveBackgrounds2Debug(type:Copy) {
+	from "background_images"
+	include "*.png"
+	into layout.buildDirectory.dir("install\\robotSim\\debug\\lib")
+}
+
+task moveBackgrounds2Release(type:Copy) {
+	from "background_images"
+	include "*.png"
+	into layout.buildDirectory.dir("install\\robotSim\\debug\\lib")
+}
+
+task moveBackgrounds2Build(type:Copy) {
+	from "background_images"
+	include "*.png"
+	into "sim/build/"
+}
+
+task cleanUnixMac(type:Exec) {
+	description "Clean build dir for Unix and Mac"
+	workingDir "sim/"
+
+	commandLine 'make', 'clean'
+}
+
+
+task buildUnixMac(type:Exec) {
+	description "Builds program using makefile"
+	workingDir "sim/"
+
+	println "Building project..."
+	commandLine 'make'
+}
+
+task runUnixMac(type:Exec) {
+	description "Run program previously built using makefile"
+	workingDir "sim/build"
+	commandLine './sim'
+}
+
+
+// WINDOWS
+if (hasProperty("windows") || isFamily(FAMILY_WINDOWS)) {
+	windows = true
+	task SIM(dependsOn: "build")
+	SIM.dependsOn("installRobotSimDebugExecutable")
+
+	SIM.finalizedBy(moveBackgrounds2Debug)
+	SIM.finalizedBy(moveBackgrounds2Release)
+	SIM.finalizedBy("simulateRobotSimDebugExecutable")
+
+	// UNIX/MAC
+} else if (isFamily(FAMILY_UNIX) || isFamily(FAMILY_MAC)) {
+	build.finalizedBy(buildUnixMac)
+	buildUnixMac.finalizedBy(moveBackgrounds2Build)
+	runUnixMac.dependsOn(buildUnixMac)
+	task SIM(dependsOn: "runUnixMac")
+
+	clean.dependsOn(cleanUnixMac)
+
+
+	// UNKNOWN
+} else {
+	ant.fail("Unknown platform detected")
+}
+
+
+wrapper {
+	gradleVersion = '6.0'
+}
