@@ -7,6 +7,7 @@
 
 bool running = false;
 const std::string SimData::Window::name = "Robot Simulation";
+double SimData::Sim::_globalDT = 0;
 
 class Controller {
  public:

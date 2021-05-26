@@ -14,6 +14,13 @@
 
 struct SimData {
 
+
+	struct Sim {
+		static void setGlobalDT(double dt) { _globalDT = dt; } // Only one setter should be accessed (in main)
+		static double getGlobalDT() { return _globalDT; }
+		static double _globalDT;
+	};
+
 	/**
 	 * Simulator Window
 	 */
@@ -21,7 +28,7 @@ struct SimData {
 		global int Width = 1600, Height = 800; // Size of feild in cm
 		global double CPS = 500; // Essentially frames per second, but for the entire program
 		static const std::string name; // Defined in main.h
-		global int field = 2021; // Set to 0 for blank window
+		global int field = 0; // Set to 0 for blank window
 	};
 
 	/**
@@ -29,7 +36,7 @@ struct SimData {
 	 */
 	struct Robot {
 		global double weight = 50; // in KG
-		global double start_x = 100, start_y = 100, start_angle = 0; // Starting pos of robot
+		global double start_x = 100, start_y = 400, start_angle = 0; // Starting pos of robot
 		global double maxSpeed = 1, maxAcceleration = 0.2; // In meters per second
 
 		/**

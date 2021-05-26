@@ -37,25 +37,25 @@ int main(int argc, char const *argv[]) {
 	while (running) {
 		currentTime = duration.count();
 		dt = currentTime - lastTime;
+		dt /= 1000; // Convert ms to s
+		SimData::Sim::setGlobalDT(dt);
 
 
-		/**
-		 * -------- UPDATE SIMULATOR -------
-		 */
+		controller.window->window_SIM_PRE_Update(); // ------- DRAW/UPDATE SIMULATOR START
+
+
+
 		controller.sim->OnUpdate();
 		controller.robot->update();
+		controller.window->drawInfoLabel("Set CPS: " + std::to_string(WindowData::CPS) + " Actual CPS: " + std::to_string(ACTUAL_CPS));
+		controller.window->drawInfoLabel("Avg Delta time/s: " + std::to_string(avg_dt) + " Actual Delta time: " + std::to_string(dt));
+		controller.window->drawInfoLabel("Counter: " + std::to_string(count));
+		controller.window->drawInfoLabel("Window Size: " + std::to_string(WindowData::Width) + "x" + std::to_string(WindowData::Height));
 
-		/**
-		 * ------ END UPDATE SIMULATOR ------
-		 */
 
-		controller.window->update();
-		controller.window->reset();
-		
-		controller.window->drawInfoText("Set CPS: " + std::to_string(WindowData::CPS) + " Actual CPS: " + std::to_string(ACTUAL_CPS));
-		controller.window->drawInfoText("Avg Delta time/s: " + std::to_string(avg_dt) + " Actual Delta time: " + std::to_string(dt));
-		controller.window->drawInfoText("Counter: " + std::to_string(count));
-		controller.window->drawInfoText("Window Size: " + std::to_string(WindowData::Width) + "x" + std::to_string(WindowData::Height));
+
+
+		controller.window->window_SIM_POST_Update(); // ------- DRAW/UPDATE SIMULATOR END
 
 		FPSController();
 

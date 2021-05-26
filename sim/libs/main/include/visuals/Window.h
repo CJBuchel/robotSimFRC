@@ -4,19 +4,26 @@
 #include "headers.h"
 #include "Draw.h"
 
+/**
+ * README
+ * 
+ * Display results by drawing in between PRE and POST window update and reset afterwards
+ * 
+ * 
+ */
 class Window : public Draw {
  public:
 	Window(double height = 800, double width = 1600, std::string name = "");
 
 	/**
-	 * Update image
+	 * prep for all functions to draw on top
 	 */
-	void update();
+	void window_SIM_PRE_Update();
 
 	/**
-	 * Reset image
+	 * post update after funcitons have drawn on top. (display results)
 	 */
-	void reset();
+	void window_SIM_POST_Update();
 
 	/**
 	 * Get Window
@@ -24,9 +31,14 @@ class Window : public Draw {
 	cv::Mat &getWindow() { return this->_window; }
 
  private:
-	cv::Mat _window; // Main window
+
+	/**
+	 * Reset image
+	 */
+	void reset();
+
 	cv::Mat _background; // Background image
-	cv::Mat _output; // Blended output
+	cv::Mat _window; // Main window displayed after adding background and drawings
 	
 	std::string _name;
 	double _height, _width;
