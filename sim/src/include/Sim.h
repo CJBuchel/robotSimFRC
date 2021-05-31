@@ -1,4 +1,5 @@
 #include "headers.h"
+#include "world/World.h"
 #include "visuals/Window.h"
 
 class Sim {

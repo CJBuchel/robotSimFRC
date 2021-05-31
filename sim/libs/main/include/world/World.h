@@ -12,11 +12,32 @@
 #define WORLD_H
 
 #include "headers.h"
-#include "SimData.h"
 
 
 class World {
  public:
+
+	/**
+	 * Initialize the world members
+	 */
+	static void init() {
+		std::cout << "World Values Initialized" << std::endl;
+
+		// Motor init
+		for (int i = 0; i < Config::World::motorPorts; i++) {
+			motors.push_back(0);
+		}
+
+		// Encoder init
+		for (int i = 0; i < Config::World::encoderPorts; i++) {
+			encoders.push_back(0);
+		}
+
+		// Gyro init
+		for (int i = 0; i < Config::World::gyroPorts; i++) {
+			gyros.push_back(0);
+		}
+	}
 
 	/**
 	 * Motor controllers
@@ -33,7 +54,7 @@ class World {
 	 * Encoder controllers
 	 */
 	static void setEnc(int port, double value) {
-		encoders.at(port);
+		encoders.at(port) = value;
 	}
 
 	static double getEnc(int port) {
@@ -49,9 +70,9 @@ class World {
 	}
 
  private:
-	static std::vector<double>motors; // Motor vals
-	static std::vector<double>encoders; // Enc vals
-	static std::vector<double>gyros; // Gyro vals
+	static std::vector<double> motors; // Motor vals
+	static std::vector<double> encoders; // Enc vals
+	static std::vector<double> gyros; // Gyro vals
 };
 
 #endif
