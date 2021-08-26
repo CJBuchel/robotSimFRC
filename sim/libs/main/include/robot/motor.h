@@ -9,10 +9,17 @@ class Motor {
 		this->_port = port;
 	}
 
-	void set(double power) {
-		
-		this->_power = power;
-	}
+	void set(double power);
+
+	/**
+	 * Return the current power for the motor
+	 */
+	double get();
+
+	/**
+	 * Return the current port number for the motor
+	 */
+	int getPort();
 
  private:
 	int _port; // Internal port

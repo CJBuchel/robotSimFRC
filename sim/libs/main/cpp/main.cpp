@@ -45,6 +45,7 @@ int main(int argc, char const *argv[]) {
 
 
 
+
 		controller.sim->OnUpdate();
 		controller.robot->update();
 		controller.window->drawInfoLabel("Set CPS: " + std::to_string(WindowData::CPS) + " Actual CPS: " + std::to_string(ACTUAL_CPS));
