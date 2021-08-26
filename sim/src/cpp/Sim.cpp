@@ -20,5 +20,5 @@ void Sim::Init() {
 void Sim::OnUpdate() {
 	// World::setMotor(0, 0.5);
 	// std::cout << "Motor 0: " << World::getMotor(0) << std::endl;
-	drivetrain->set(0.5,0);
+	drivetrain->set(1, 1);
 }

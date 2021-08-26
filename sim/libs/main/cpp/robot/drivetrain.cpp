@@ -13,7 +13,7 @@ Drivetrain::~Drivetrain() {
 
 void Drivetrain::set(double left, double right) {
 	_left->set(left);
-	_right->set(right);
+	_right->set(-right);
 }
 
 Motor *Drivetrain::getLeft() {
