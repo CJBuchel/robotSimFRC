@@ -7,7 +7,7 @@ class Sim {
 	Sim(Window &window) : _window(window) {}
 
 	void Init();
-	void OnUpdate();
+	void Periodic();
 
 	Window &getWindow() { return _window; }
 

@@ -46,7 +46,7 @@ int main(int argc, char const *argv[]) {
 
 
 
-		controller.sim->OnUpdate();
+		controller.sim->Periodic();
 		controller.robot->update();
 		controller.window->drawInfoLabel("Set CPS: " + std::to_string(WindowData::CPS) + " Actual CPS: " + std::to_string(ACTUAL_CPS));
 		controller.window->drawInfoLabel("Avg Delta time/s: " + std::to_string(avg_dt) + " Actual Delta time: " + std::to_string(dt));

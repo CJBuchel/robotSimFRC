@@ -17,8 +17,6 @@ void Sim::Init() {
 /**
  * Periodic Update
  */
-void Sim::OnUpdate() {
-	// World::setMotor(0, 0.5);
-	// std::cout << "Motor 0: " << World::getMotor(0) << std::endl;
-	drivetrain->set(1, 1);
+void Sim::Periodic() {
+	// drivetrain->set(1, 1);
 }
