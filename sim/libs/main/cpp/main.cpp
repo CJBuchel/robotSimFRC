@@ -62,7 +62,7 @@ int main(int argc, char const *argv[]) {
 		stop = high_resolution_clock::now();
 		duration = duration_cast<milliseconds>(stop - start);
 
-		if (count >= 1000) {
+		if (count >= 1) {
 
 			// Calc CPS
 			count = 0;
