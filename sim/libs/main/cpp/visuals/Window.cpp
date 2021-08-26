@@ -5,10 +5,10 @@ Window::Window(double height, double width, std::string name) : Draw(this->_wind
 	this->_width = width;
 	this->_window = cv::Mat::zeros(this->_height, this->_width, CV_8UC3);
 	
-	if (SimData::Window::field == 0) {
+	if (Config::Window::field == 0) {
 		this->_background = cv::Mat::zeros(this->_height, this->_width, CV_8UC3);
 	} else {
-		std::string year = std::to_string(SimData::Window::field);
+		std::string year = std::to_string(Config::Window::field);
 		this->_background = cv::imread(year + ".png", cv::IMREAD_COLOR);
 		cv::resize(this->_background, this->_background, cv::Size(this->_width, this->_height));
 	}

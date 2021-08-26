@@ -6,13 +6,13 @@
  */
 
 
-#ifndef SIMDATA_H
-#define SIMDATA_H
+#ifndef CONFIG_H
+#define CONFIG_H
 
 #include <string.h>
 #define global static constexpr // Constant experssion accessable to all (cannot be modified)
 
-struct SimData {
+struct Config {
 
 
 	struct Sim {
@@ -36,7 +36,7 @@ struct SimData {
 	 */
 	struct Robot {
 		global double weight = 50; // in KG
-		global double start_x = 100, start_y = 400, start_angle = 0; // Starting pos of robot
+		global double start_x = 100, start_y = 400, start_angle = 90; // Starting pos of robot
 		global double maxSpeed = 1, maxAcceleration = 0.2; // In meters per second
 
 		/**
@@ -54,6 +54,15 @@ struct SimData {
 
 		global int leftEncPort = 0;
 		global int rightEncPort = 1;
+
+		global int gyroPort = 0;
+	};
+
+
+	struct World {
+		global int motorPorts = 4; // Total motor ports
+		global int encoderPorts = 4; // Total encoder ports
+		global int gyroPorts = 1; // Total gyro ports
 	};
 };
 

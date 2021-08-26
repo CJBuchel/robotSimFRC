@@ -10,6 +10,7 @@ class Motor {
 	}
 
 	void set(double power) {
+		
 		this->_power = power;
 	}
 
