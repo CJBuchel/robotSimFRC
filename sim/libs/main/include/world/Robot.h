@@ -51,6 +51,14 @@ class Robot {
 		}
 	}
 
+	double maxSpeedPowerCheck(double speed) {
+		if (fabs(speed) >= Config::Robot::maxSpeed) {
+			return speed > 0 ? Config::Robot::maxSpeed : -Config::Robot::maxSpeed;
+		} else {
+			return speed;
+		}
+	}
+
 	void update() {
 		double left = 0;
 		double right = 0;
@@ -85,24 +93,14 @@ class Robot {
 		_currentLeftSpeed = fabs(_currentLeftSpeed) < fabs(targetLeftSpeed) ? acceleratedPower(_currentLeftSpeed, targetLeftSpeed) : targetLeftSpeed;
 		_currentRightSpeed = fabs(_currentRightSpeed) < fabs(targetRightSpeed) ? acceleratedPower(_currentRightSpeed, targetRightSpeed) : targetRightSpeed;
 
-		_currentLeftSpeed = fabs(_currentLeftSpeed) > Config::Robot::maxSpeed ? Config::Robot::maxSpeed : _currentLeftSpeed;
-		_currentRightSpeed = fabs(_currentRightSpeed) > Config::Robot::maxSpeed ? Config::Robot::maxSpeed : _currentRightSpeed;
+		_currentLeftSpeed = maxSpeedPowerCheck(_currentLeftSpeed);
+		_currentRightSpeed = maxSpeedPowerCheck(_currentRightSpeed);
 
 		std::cout << "Speed in m/s: " << _currentLeftSpeed << ", " << _currentRightSpeed << " Target Speed: " << targetLeftSpeed << ", " << targetRightSpeed << std::endl;
-		// equivilent speed to pixels
-		// _currentLeftSpeed = left * ((left * 100)/_cps);
+
+		// Convert m/s to pixels per cycle (*50 because of relative xy vs actual xy)
 		_currentLeftSpeed = (_currentLeftSpeed*500)/_cps;
-
-		// _currentRightSpeed = right * ((right * 100)/_cps);
 		_currentRightSpeed = (_currentRightSpeed*500)/_cps;
-
-		std::cout << "Speed in p/c: " << _currentLeftSpeed << ", " << _currentRightSpeed << " Target Speed p/s: " << targetLeftSpeed*100 << ", " << targetRightSpeed*100 << std::endl;
-		// std::cout << "pixel x: " << std::setprecision(4) << _xx << std::endl;
-		// std::cout << "robot x: " << std::setprecision(4) << _x << std::endl;
-		// std::cout << "cps: " << _cps << std::endl;
-
-		// _currentLeftSpeed = _currentLeftSpeed;
-		// _currentRightSpeed = _currentRightSpeed;
 
 		// Angle/linear movement
 		double ang = angular(_currentLeftSpeed, _currentRightSpeed);
