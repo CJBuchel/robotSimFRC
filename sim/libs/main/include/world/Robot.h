@@ -30,6 +30,9 @@ class Robot {
 			_x = 0;
 			_y = 0;
 			_heading = mathUtil::d2r(Config::Robot::start_angle);
+			_currentLeftSpeed = 0;
+			_currentRightSpeed = 0;
+			_time = 0;
 		}
 
 		// y reset
@@ -37,17 +40,24 @@ class Robot {
 			_x = 0;
 			_y = 0;
 			_heading = mathUtil::d2r(Config::Robot::start_angle);
+			_currentLeftSpeed = 0;
+			_currentRightSpeed = 0;
+			_time = 0;
 		}
 	}
 
 	// Return speed + value for certain acceleration (0.2m/s)
 	double acceleratedPower(double speed, double targetSpeed) {
-		if (targetSpeed < 0) {
-			return (speed-(Config::Robot::maxAcceleration/_cps));
-		} else if (targetSpeed > 0) {
-			return (speed+(Config::Robot::maxAcceleration/_cps));
+		if (fabs(speed) >= fabs(targetSpeed)) {
+			return targetSpeed;
 		} else {
-			return 0;
+			if (targetSpeed < 0) {
+				return (speed-(Config::Robot::maxAcceleration/_cps));
+			} else if (targetSpeed > 0) {
+				return (speed+(Config::Robot::maxAcceleration/_cps));
+			} else {
+				return 0;
+			}
 		}
 	}
 
@@ -63,14 +73,15 @@ class Robot {
 		double left = 0;
 		double right = 0;
 
+		_time += Config::Sim::getGlobalDT();
+		_window.drawInfoLabel("Time: " + std::to_string(_time));
+
 		collisionReset(); // reset if collide
 
 		// Update cps
 		if (Config::Sim::getGlobalCPS() > 0) {
 			_cps = Config::Sim::getGlobalCPS();
 		}
-
-		_cps = 250; // tmp
 
 		// get motors and average the power
 		left += World::getMotor(Config::Robot::leftMPort[0]);
@@ -89,22 +100,23 @@ class Robot {
 		targetLeftSpeed = left * Config::Robot::maxSpeed;
 		targetRightSpeed = right * Config::Robot::maxSpeed;
 
-		
-		_currentLeftSpeed = fabs(_currentLeftSpeed) < fabs(targetLeftSpeed) ? acceleratedPower(_currentLeftSpeed, targetLeftSpeed) : targetLeftSpeed;
-		_currentRightSpeed = fabs(_currentRightSpeed) < fabs(targetRightSpeed) ? acceleratedPower(_currentRightSpeed, targetRightSpeed) : targetRightSpeed;
+		// Add acceleration into equation
+		_currentLeftSpeed = acceleratedPower(_currentLeftSpeed, targetLeftSpeed);
+		_currentRightSpeed = acceleratedPower(_currentRightSpeed, targetRightSpeed);
+		// std::cout << "Speed m/s: " << _currentLeftSpeed << std::endl;
 
+		// check if it's going over maximum speed
 		_currentLeftSpeed = maxSpeedPowerCheck(_currentLeftSpeed);
 		_currentRightSpeed = maxSpeedPowerCheck(_currentRightSpeed);
 
-		std::cout << "Speed in m/s: " << _currentLeftSpeed << ", " << _currentRightSpeed << " Target Speed: " << targetLeftSpeed << ", " << targetRightSpeed << std::endl;
+		double currentLeftSpeedP = (_currentLeftSpeed*250)/_cps;
+		double currentRightSpeedP = (_currentRightSpeed*250)/_cps;
 
-		// Convert m/s to pixels per cycle (*50 because of relative xy vs actual xy)
-		_currentLeftSpeed = (_currentLeftSpeed*500)/_cps;
-		_currentRightSpeed = (_currentRightSpeed*500)/_cps;
+		// std::cout << "Speed p/s: " << currentLeftSpeedP*_cps << std::endl;
 
 		// Angle/linear movement
-		double ang = angular(_currentLeftSpeed, _currentRightSpeed);
-		double lin = linear(_currentLeftSpeed, _currentRightSpeed);
+		double ang = angular(currentLeftSpeedP, currentRightSpeedP);
+		double lin = linear(currentLeftSpeedP, currentRightSpeedP);
 
 		_heading += ang * Config::Sim::getGlobalDT();
 		_angle = mathUtil::r2d(_heading);
@@ -113,8 +125,7 @@ class Robot {
 		_x += lin * Config::Sim::getGlobalDT() * cos(_heading);
 		_y += lin * Config::Sim::getGlobalDT() * sin(_heading);
 
-		drawRobot(_window.getWindow(), _currentLeftSpeed, _currentRightSpeed);
-		// cv::waitKey(1000);
+		drawRobot(_window.getWindow(), currentLeftSpeedP, currentRightSpeedP);
 	}
 
 	void drawRobot(cv::Mat &img, double l, double r) {
@@ -164,6 +175,7 @@ class Robot {
 
 	double _currentLeftSpeed = 0, _currentRightSpeed = 0; // speed in meters per second
 	int _cps = 250;
+	double _time = 0;
 };
 
 #endif
