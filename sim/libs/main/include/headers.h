@@ -28,6 +28,7 @@ using namespace std::chrono;
 /**
  * Locals
  */
-#include "SimData.h"
+#include "Config.h"
+#include "mathUtil.h"
 
 #endif

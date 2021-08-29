@@ -1,4 +1,5 @@
 #include "headers.h"
+#include "world/World.h"
 #include "visuals/Window.h"
 
 class Sim {
@@ -6,7 +7,7 @@ class Sim {
 	Sim(Window &window) : _window(window) {}
 
 	void Init();
-	void OnUpdate();
+	void Periodic();
 
 	Window &getWindow() { return _window; }
 

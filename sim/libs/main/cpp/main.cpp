@@ -3,14 +3,14 @@
  */
 #include "main.h"
 
-using WindowData = SimData::Window;
-using RobotData = SimData::Robot;
+using WindowData = Config::Window;
+using RobotData = Config::Robot;
 
 
 void FPSController() {
 	// Determin FPS of program (ish)
-	double ms = 1000/SimData::Window::CPS; // 60 CPS = 16.6ms every cycle
-	if (SimData::Window::CPS == 0) {
+	double ms = 1000/Config::Window::CPS; // 60 CPS = 16.6ms every cycle
+	if (Config::Window::CPS == 0) {
 		ms = 1;
 	}
 
@@ -38,14 +38,16 @@ int main(int argc, char const *argv[]) {
 		currentTime = duration.count();
 		dt = currentTime - lastTime;
 		dt /= 1000; // Convert ms to s
-		SimData::Sim::setGlobalDT(dt);
+		Config::Sim::setGlobalDT(dt);
+		Config::Sim::setGlobalCPS(ACTUAL_CPS);
 
 
 		controller.window->window_SIM_PRE_Update(); // ------- DRAW/UPDATE SIMULATOR START
 
 
 
-		controller.sim->OnUpdate();
+
+		controller.sim->Periodic();
 		controller.robot->update();
 		controller.window->drawInfoLabel("Set CPS: " + std::to_string(WindowData::CPS) + " Actual CPS: " + std::to_string(ACTUAL_CPS));
 		controller.window->drawInfoLabel("Avg Delta time/s: " + std::to_string(avg_dt) + " Actual Delta time: " + std::to_string(dt));
@@ -62,7 +64,7 @@ int main(int argc, char const *argv[]) {
 		stop = high_resolution_clock::now();
 		duration = duration_cast<milliseconds>(stop - start);
 
-		if (count >= 1000) {
+		if (count >= 1) {
 
 			// Calc CPS
 			count = 0;
