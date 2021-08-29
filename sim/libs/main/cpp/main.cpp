@@ -39,6 +39,7 @@ int main(int argc, char const *argv[]) {
 		dt = currentTime - lastTime;
 		dt /= 1000; // Convert ms to s
 		Config::Sim::setGlobalDT(dt);
+		Config::Sim::setGlobalCPS(ACTUAL_CPS);
 
 
 		controller.window->window_SIM_PRE_Update(); // ------- DRAW/UPDATE SIMULATOR START

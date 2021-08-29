@@ -3,7 +3,9 @@
 
 #include "World.h"
 #include "visuals/Window.h"
+#include <iomanip>
 
+// Colour values
 static cv::Scalar rightColour{0, 0, 255};
 static cv::Scalar leftColour{255, 0, 0};
 static cv::Scalar frontColour{0, 255, 0};
@@ -21,15 +23,90 @@ class Robot {
 		update(); // Initial draw
 	}
 
+	void collisionReset() {
+
+		// x reset
+		if (_x*50 < 0 || _x*50 > _window.getWidth()) {
+			_x = 0;
+			_y = 0;
+			_heading = mathUtil::d2r(Config::Robot::start_angle);
+		}
+
+		// y reset
+		if (_y*50 < 0 || _y*50 > _window.getHeight()) {
+			_x = 0;
+			_y = 0;
+			_heading = mathUtil::d2r(Config::Robot::start_angle);
+		}
+	}
+
+	// Return speed + value for certain acceleration (0.2m/s)
+	double acceleratedPower(double speed, double targetSpeed) {
+		if (targetSpeed < 0) {
+			return (speed-(Config::Robot::maxAcceleration/_cps));
+		} else if (targetSpeed > 0) {
+			return (speed+(Config::Robot::maxAcceleration/_cps));
+		} else {
+			return 0;
+		}
+	}
+
 	void update() {
+		double left = 0;
+		double right = 0;
 
-		double left = World::getMotor(Config::Robot::leftMPort);
-		double right = World::getMotor(Config::Robot::rightMPort);
+		collisionReset(); // reset if collide
 
-		// Angle/Gyro
-		double ang = angular(left, right);
+		// Update cps
+		if (Config::Sim::getGlobalCPS() > 0) {
+			_cps = Config::Sim::getGlobalCPS();
+		}
 
-		double lin = linear(left, right);
+		_cps = 250; // tmp
+
+		// get motors and average the power
+		left += World::getMotor(Config::Robot::leftMPort[0]);
+		left += World::getMotor(Config::Robot::leftMPort[1]);
+
+		right += World::getMotor(Config::Robot::rightMPort[0]);
+		right += World::getMotor(Config::Robot::rightMPort[1]);
+
+		left /= Config::World::motorPorts/2;
+		right /= Config::World::motorPorts/2;
+
+		// in meters per second
+		double targetLeftSpeed = 0;
+		double targetRightSpeed = 0;
+
+		targetLeftSpeed = left * Config::Robot::maxSpeed;
+		targetRightSpeed = right * Config::Robot::maxSpeed;
+
+		
+		_currentLeftSpeed = fabs(_currentLeftSpeed) < fabs(targetLeftSpeed) ? acceleratedPower(_currentLeftSpeed, targetLeftSpeed) : targetLeftSpeed;
+		_currentRightSpeed = fabs(_currentRightSpeed) < fabs(targetRightSpeed) ? acceleratedPower(_currentRightSpeed, targetRightSpeed) : targetRightSpeed;
+
+		_currentLeftSpeed = fabs(_currentLeftSpeed) > Config::Robot::maxSpeed ? Config::Robot::maxSpeed : _currentLeftSpeed;
+		_currentRightSpeed = fabs(_currentRightSpeed) > Config::Robot::maxSpeed ? Config::Robot::maxSpeed : _currentRightSpeed;
+
+		std::cout << "Speed in m/s: " << _currentLeftSpeed << ", " << _currentRightSpeed << " Target Speed: " << targetLeftSpeed << ", " << targetRightSpeed << std::endl;
+		// equivilent speed to pixels
+		// _currentLeftSpeed = left * ((left * 100)/_cps);
+		_currentLeftSpeed = (_currentLeftSpeed*500)/_cps;
+
+		// _currentRightSpeed = right * ((right * 100)/_cps);
+		_currentRightSpeed = (_currentRightSpeed*500)/_cps;
+
+		std::cout << "Speed in p/c: " << _currentLeftSpeed << ", " << _currentRightSpeed << " Target Speed p/s: " << targetLeftSpeed*100 << ", " << targetRightSpeed*100 << std::endl;
+		// std::cout << "pixel x: " << std::setprecision(4) << _xx << std::endl;
+		// std::cout << "robot x: " << std::setprecision(4) << _x << std::endl;
+		// std::cout << "cps: " << _cps << std::endl;
+
+		// _currentLeftSpeed = _currentLeftSpeed;
+		// _currentRightSpeed = _currentRightSpeed;
+
+		// Angle/linear movement
+		double ang = angular(_currentLeftSpeed, _currentRightSpeed);
+		double lin = linear(_currentLeftSpeed, _currentRightSpeed);
 
 		_heading += ang * Config::Sim::getGlobalDT();
 		_angle = mathUtil::r2d(_heading);
@@ -38,15 +115,8 @@ class Robot {
 		_x += lin * Config::Sim::getGlobalDT() * cos(_heading);
 		_y += lin * Config::Sim::getGlobalDT() * sin(_heading);
 
-		drawRobot(_window.getWindow(), left, right);
-
-		// Draw main robot body
-		// _window.drawRect({_x, _y}, Config::Robot::width, Config::Robot::length, _angle);
-		// _window.drawText("x: " + std::to_string((int)_x) + ", y: " + std::to_string((int)_y), {_x-50, _y+70});
-
-
-		// Draw robot left track
-		// _window.drawRect({_x, _y}, 10, Config::Robot::length, _angle, {255, 0, 0});
+		drawRobot(_window.getWindow(), _currentLeftSpeed, _currentRightSpeed);
+		// cv::waitKey(1000);
 	}
 
 	void drawRobot(cv::Mat &img, double l, double r) {
@@ -82,7 +152,6 @@ class Robot {
 	}
 
 	cv::Point toWorld(double x, double y) {
-		// cv::Point origin{ Config::Window::Width / 2, Config::Window::Height / 2 };
 		cv::Point origin{ (int)Config::Robot::start_x, (int)Config::Robot::start_y };
 		cv::Point robot{ static_cast<int>(50 * (_x + x * cos(_heading) - y * sin(_heading))),
 										 static_cast<int>(50 * (_y + x * sin(_heading) + y * cos(_heading))) };
@@ -94,6 +163,9 @@ class Robot {
  private:
 	Window &_window;
 	double _x, _y, _angle, _heading = -3.14/2; // Positional data
+
+	double _currentLeftSpeed = 0, _currentRightSpeed = 0; // speed in meters per second
+	int _cps = 250;
 };
 
 #endif

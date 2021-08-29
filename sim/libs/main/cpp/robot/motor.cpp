@@ -1,5 +1,5 @@
 #include "world/World.h"
-#include "robot/motor.h"
+#include "robot/Motor.h"
 
 void Motor::set(double power) {
 	this->_power = power;

@@ -5,9 +5,11 @@
 #include "Sim.h"
 #include "world/Robot.h"
 
+// Set globals
 bool running = false;
 const std::string Config::Window::name = "Robot Simulation";
 double Config::Sim::_globalDT = 0;
+double Config::Sim::_cps = 0;
 
 class Controller {
  public:

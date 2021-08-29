@@ -30,6 +30,20 @@ class Window : public Draw {
 	 */
 	cv::Mat &getWindow() { return this->_window; }
 
+	/**
+	 * get width
+	 */
+	double getWidth() {
+		return this->_width;
+	}
+
+	/**
+	 * get height
+	 */
+	double getHeight() {
+		return this->_height;
+	}
+
  private:
 
 	/**

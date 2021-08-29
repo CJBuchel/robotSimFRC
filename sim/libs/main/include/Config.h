@@ -14,11 +14,18 @@
 
 struct Config {
 
-
+	/**
+	 * Sim data, global delta time
+	 */
 	struct Sim {
 		static void setGlobalDT(double dt) { _globalDT = dt; } // Only one setter should be accessed (in main)
 		static double getGlobalDT() { return _globalDT; }
+
+		static void setGlobalCPS(double cps) { _cps = cps; }
+		static double getGlobalCPS() { return _cps; }
+
 		static double _globalDT;
+		static double _cps;
 	};
 
 	/**
@@ -29,6 +36,12 @@ struct Config {
 		global double CPS = 500; // Essentially frames per second, but for the entire program
 		static const std::string name; // Defined in main.h
 		global int field = 2019; // Set to 0 for blank window
+	};
+
+	struct World {
+		global int motorPorts = 4; // Total motor ports
+		global int encoderPorts = 4; // Total encoder ports
+		global int gyroPorts = 1; // Total gyro ports
 	};
 
 	/**
@@ -49,20 +62,13 @@ struct Config {
 		/**
 		 * Ports
 		 */
-		global int leftMPort = 0; 
-		global int rightMPort = 1;
+		global int leftMPort[World::motorPorts/2] = {0,1}; 
+		global int rightMPort[World::motorPorts/2] = {2,3};
 
 		global int leftEncPort = 0;
 		global int rightEncPort = 1;
 
 		global int gyroPort = 0;
-	};
-
-
-	struct World {
-		global int motorPorts = 4; // Total motor ports
-		global int encoderPorts = 4; // Total encoder ports
-		global int gyroPorts = 1; // Total gyro ports
 	};
 };
 
