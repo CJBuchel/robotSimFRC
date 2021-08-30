@@ -10,6 +10,8 @@ bool running = false;
 const std::string Config::Window::name = "Robot Simulation";
 double Config::Sim::_globalDT = 0;
 double Config::Sim::_cps = 0;
+double Config::Sim::_time = 0;
+int Config::Keyboard::_key = -1;
 
 class Controller {
  public:
