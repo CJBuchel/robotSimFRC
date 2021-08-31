@@ -2,7 +2,7 @@
 #include "robot/Motor.h"
 
 void Motor::set(double power) {
-	this->_power = power;
+	this->_power = power > 1 ? 1 : power < -1 ? -1 : power; // can only be between -1:1
 	World::setMotor(_port, _power);
 }
 

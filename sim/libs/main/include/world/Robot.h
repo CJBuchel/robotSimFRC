@@ -23,26 +23,27 @@ class Robot {
 		update(); // Initial draw
 	}
 
-	void collisionReset() {
+	void reset() {
+		_x = 0;
+		_y = 0;
+		_heading = mathUtil::d2r(Config::Robot::start_angle);
+		_currentLeftSpeed = 0;
+		_currentRightSpeed = 0;
+		_time = 0;
+		_leftRotations = 0;
+		_rightRotations = 0;
+	}
+
+	void collisionCheck() {
 
 		// x reset
-		if (_x*50 < 0 || _x*50 > _window.getWidth()) {
-			_x = 0;
-			_y = 0;
-			_heading = mathUtil::d2r(Config::Robot::start_angle);
-			_currentLeftSpeed = 0;
-			_currentRightSpeed = 0;
-			_time = 0;
+		if (_worldX < 0 || _worldX > _window.getWidth()) {
+			reset();
 		}
 
 		// y reset
-		if (_y*50 < 0 || _y*50 > _window.getHeight()) {
-			_x = 0;
-			_y = 0;
-			_heading = mathUtil::d2r(Config::Robot::start_angle);
-			_currentLeftSpeed = 0;
-			_currentRightSpeed = 0;
-			_time = 0;
+		if (_worldY < 0 || _worldY > _window.getHeight()) {
+			reset();
 		}
 	}
 
@@ -70,13 +71,18 @@ class Robot {
 	}
 
 	void update() {
+		if (Config::Keyboard::getKey() == 114) { // r
+			reset();
+		}
+
 		double left = 0;
 		double right = 0;
 
 		_time += Config::Sim::getGlobalDT();
-		_window.drawInfoLabel("Time: " + std::to_string(_time));
+		Config::Sim::setGlobalTimeStamp(_time);
+		_window.drawInfoLabel("Time Stamp: " + std::to_string(_time));
 
-		collisionReset(); // reset if collide
+		collisionCheck(); // reset if collide
 
 		// Update cps
 		if (Config::Sim::getGlobalCPS() > 0) {
@@ -90,29 +96,33 @@ class Robot {
 		right += World::getMotor(Config::Robot::rightMPort[0]);
 		right += World::getMotor(Config::Robot::rightMPort[1]);
 
+		// average out speed based on how many motors are used
 		left /= Config::World::motorPorts/2;
 		right /= Config::World::motorPorts/2;
 
-		// in meters per second
-		double targetLeftSpeed = 0;
-		double targetRightSpeed = 0;
-
-		targetLeftSpeed = left * Config::Robot::maxSpeed;
-		targetRightSpeed = right * Config::Robot::maxSpeed;
+		// target speed in meters per second
+		double targetLeftSpeed = left * Config::Robot::maxSpeed;
+		double targetRightSpeed = right * Config::Robot::maxSpeed;
 
 		// Add acceleration into equation
 		_currentLeftSpeed = acceleratedPower(_currentLeftSpeed, targetLeftSpeed);
 		_currentRightSpeed = acceleratedPower(_currentRightSpeed, targetRightSpeed);
-		// std::cout << "Speed m/s: " << _currentLeftSpeed << std::endl;
 
 		// check if it's going over maximum speed
 		_currentLeftSpeed = maxSpeedPowerCheck(_currentLeftSpeed);
 		_currentRightSpeed = maxSpeedPowerCheck(_currentRightSpeed);
 
+		// Encoder feedback
+		_leftRotations += (_currentLeftSpeed/0.1524)/_cps;
+		_rightRotations += (_currentRightSpeed/0.1524)/_cps;
+
+		// Set encoders
+		World::setEnc(Config::Robot::leftEncPort, (_leftRotations*Config::Robot::ticksPerRotation));
+		World::setEnc(Config::Robot::rightEncPort, (_rightRotations*Config::Robot::ticksPerRotation));
+
+		// Speed in pixels per cycle
 		double currentLeftSpeedP = (_currentLeftSpeed*250)/_cps;
 		double currentRightSpeedP = (_currentRightSpeed*250)/_cps;
-
-		// std::cout << "Speed p/s: " << currentLeftSpeedP*_cps << std::endl;
 
 		// Angle/linear movement
 		double ang = angular(currentLeftSpeedP, currentRightSpeedP);
@@ -125,13 +135,18 @@ class Robot {
 		_x += lin * Config::Sim::getGlobalDT() * cos(_heading);
 		_y += lin * Config::Sim::getGlobalDT() * sin(_heading);
 
+		// Actual x and y of robot in the world
+		_worldX = toWorld(0,0).x;
+		_worldY = toWorld(0,0).y;
+
 		drawRobot(_window.getWindow(), currentLeftSpeedP, currentRightSpeedP);
 	}
 
 	void drawRobot(cv::Mat &img, double l, double r) {
 		cv::circle(img, toWorld(0,0), 2, cv::Scalar(255,255,255), -1);
-		_window.drawText("_x: " + std::to_string(_x) + ", _y: " + std::to_string(_y), {500, 500});
-		_window.drawText("x: " + std::to_string(_x) + ", y: " + std::to_string(_y), {500, 550});
+		_window.drawText("rel x: " + std::to_string(_x) + ", rel y: " + std::to_string(_y), {500, 525});
+		_window.drawText("rel x: " + std::to_string(_worldX) + ", rel y: " + std::to_string(_worldY), {500, 550});
+		_window.drawText("LeftEncoder: " + std::to_string(_leftRotations) + ", RightEncoder: " + std::to_string(_rightRotations), {500, 575});
 		_window.drawText("Gyro: " + std::to_string(_angle), {500, 600});
 
 		// Base
@@ -172,6 +187,8 @@ class Robot {
  private:
 	Window &_window;
 	double _x, _y, _angle, _heading = -3.14/2; // Positional data
+	double _worldX, _worldY;
+	double _leftRotations = 0, _rightRotations = 0;
 
 	double _currentLeftSpeed = 0, _currentRightSpeed = 0; // speed in meters per second
 	int _cps = 250;

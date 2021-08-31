@@ -10,3 +10,8 @@
 - Actual speed of the robot (e.g 100% = 1) only moves pixel every cycle. CPS or cycles per second.
 - Speed conversion is from cycles per second to pixels per second. Then adjust to fit 100 pixels per second, to meters per second/ visa versa.
 
+3. Encoder feedback
+
+- Reverse the process of distance traveled (pixels every cycle) to provide an input of distance traveled.
+- Need to use the speed over time rather than physical pixels moved, due to the distance travel being relative. And not as the crow flies. Current speed in m/s, converted into m/c, then transform into distance using the wheel diameter.
+- Encoders use rotations classified into ticks. E.g, 2048 ticks per rotation. (wheelRotation*ticks=rawTicks)
