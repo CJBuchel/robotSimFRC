@@ -116,6 +116,10 @@ class Robot {
 		_leftRotations += (_currentLeftSpeed/0.1524)/_cps;
 		_rightRotations += (_currentRightSpeed/0.1524)/_cps;
 
+		// Set encoders
+		World::setEnc(Config::Robot::leftEncPort, (_leftRotations*Config::Robot::ticksPerRotation));
+		World::setEnc(Config::Robot::rightEncPort, (_rightRotations*Config::Robot::ticksPerRotation));
+
 		// Speed in pixels per cycle
 		double currentLeftSpeedP = (_currentLeftSpeed*250)/_cps;
 		double currentRightSpeedP = (_currentRightSpeed*250)/_cps;

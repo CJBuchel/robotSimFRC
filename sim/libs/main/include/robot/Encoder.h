@@ -8,17 +8,16 @@
  */
 class Encoder {
  public:
-	Encoder(double ticks_p_r, int port) {
+	Encoder(int port, double ticks_p_r = 2048) {
 		this->_ticksPerRotation = ticks_p_r;
 		this->_port = port;
 	}
 
-	double getValue() { return this->_value; }
-	void setValue(double value) { this->_value = value; } // Set value should only be used in sim where the sim sets the encoder
+	double getRawTicks();
+	double getRotations();
 
  private:
 	double _ticksPerRotation;
-	double _value;
 	int _port;
 };
 

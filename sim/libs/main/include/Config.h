@@ -52,7 +52,7 @@ struct Config {
 
 	struct World {
 		global int motorPorts = 4; // Total motor ports
-		global int encoderPorts = 4; // Total encoder ports
+		global int encoderPorts = 2; // Total encoder ports
 		global int gyroPorts = 1; // Total gyro ports
 	};
 
