@@ -145,7 +145,7 @@ class Robot {
 	void drawRobot(cv::Mat &img, double l, double r) {
 		cv::circle(img, toWorld(0,0), 2, cv::Scalar(255,255,255), -1);
 		_window.drawText("rel x: " + std::to_string(_x) + ", rel y: " + std::to_string(_y), {500, 525});
-		_window.drawText("rel x: " + std::to_string(_worldX) + ", rel y: " + std::to_string(_worldY), {500, 550});
+		_window.drawText("x: " + std::to_string(_worldX) + ", y: " + std::to_string(_worldY), {500, 550});
 		_window.drawText("LeftEncoder: " + std::to_string(_leftRotations) + ", RightEncoder: " + std::to_string(_rightRotations), {500, 575});
 		_window.drawText("Gyro: " + std::to_string(_angle), {500, 600});
 

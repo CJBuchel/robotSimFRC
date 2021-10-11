@@ -29,7 +29,7 @@ void Sim::Init() {
  * Periodic Update
  */
 void Sim::Periodic() {
-	if (Config::Sim::getGlobalTimeStamp() < 5) {
+	if (Config::Sim::getGlobalTimeStamp() < 2) {
 		drivetrain.set(0.3, 0.3);
 	} else {
 		drivetrain.set(-1, -0.5);
