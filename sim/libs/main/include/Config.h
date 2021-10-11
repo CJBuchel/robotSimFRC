@@ -39,7 +39,7 @@ struct Config {
 		global int Width = 1600, Height = 800; // Size of feild in cm
 		global double CPS = 500; // Essentially frames per second, but for the entire program
 		static const std::string name; // Defined in main.h
-		global int field = 2021; // Set to 0 for blank window
+		global int field = 0; // Set to 0 for blank window
 	};
 
 	struct Keyboard {
