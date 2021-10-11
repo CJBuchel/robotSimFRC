@@ -35,7 +35,7 @@ int main(int argc, char const *argv[]) {
 	auto start = high_resolution_clock::now(); // Start timer
 	auto stop = high_resolution_clock::now(); // End timer
 	auto duration = duration_cast<milliseconds>(stop - start); // Duration since start
-	double currentTime = 0, lastTime = 0, dt = 0, dt_counted, avg_dt = 0; // Time values
+	double currentTime = 0, lastTime = 0, dt = 0, dt_counted = 0, avg_dt = 0; // Time values
 	double count = 0; // Cycle counter, resets every second
 	double ACTUAL_CPS = 0, cycles = 0; // cycles per second
 

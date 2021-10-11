@@ -2,7 +2,7 @@ import static org.apache.tools.ant.taskdefs.condition.Os.*
 
 plugins {
 	id "edu.wpi.first.GradleRIO" version "2021.3.1"
-	id "google-test-test-suite"
+	// id "google-test-test-suite"
 	id "groovy"
 	id "cpp"
 }
@@ -21,6 +21,7 @@ model {
 			}
 
 			targetPlatform wpi.platforms.desktop
+			targetPlatform wpi.platforms.roborio // toolchains are funky
 
 			sources.cpp {
 				source {
@@ -50,13 +51,13 @@ model {
 task moveBackgrounds2Debug(type:Copy) {
 	from "background_images"
 	include "*.png"
-	into layout.buildDirectory.dir("install\\robotSim\\debug\\lib")
+	into layout.buildDirectory.dir("install\\robotSim\\${wpi.platforms.desktop}\\debug\\lib")
 }
 
 task moveBackgrounds2Release(type:Copy) {
 	from "background_images"
 	include "*.png"
-	into layout.buildDirectory.dir("install\\robotSim\\debug\\lib")
+	into layout.buildDirectory.dir("install\\robotSim\\${wpi.platforms.desktop}\\debug\\lib")
 }
 
 task moveBackgrounds2Build(type:Copy) {
@@ -92,11 +93,11 @@ task runUnixMac(type:Exec) {
 if (hasProperty("windows") || isFamily(FAMILY_WINDOWS)) {
 	windows = true
 	task SIM(dependsOn: "build")
-	SIM.dependsOn("installRobotSimDebugExecutable")
+	SIM.dependsOn("installRobotSim${wpi.platforms.desktop.capitalize()}DebugExecutable")
 
 	SIM.finalizedBy(moveBackgrounds2Debug)
 	SIM.finalizedBy(moveBackgrounds2Release)
-	SIM.finalizedBy("simulateRobotSimDebugExecutable")
+	SIM.finalizedBy("simulateRobotSim${wpi.platforms.desktop.capitalize()}DebugExecutable")
 
 	// UNIX/MAC
 } else if (isFamily(FAMILY_UNIX) || isFamily(FAMILY_MAC)) {
