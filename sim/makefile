@@ -1,6 +1,6 @@
 # Build entrypoint for linux
 
-CC = g++
+CC = g++ -std=c++17
 PROG = sim
 
 # Dirs
