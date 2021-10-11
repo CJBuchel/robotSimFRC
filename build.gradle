@@ -51,13 +51,13 @@ model {
 task moveBackgrounds2Debug(type:Copy) {
 	from "background_images"
 	include "*.png"
-	into layout.buildDirectory.dir("install\\robotSim\\debug\\lib")
+	into layout.buildDirectory.dir("install\\robotSim\\${wpi.platforms.desktop}\\debug\\lib")
 }
 
 task moveBackgrounds2Release(type:Copy) {
 	from "background_images"
 	include "*.png"
-	into layout.buildDirectory.dir("install\\robotSim\\debug\\lib")
+	into layout.buildDirectory.dir("install\\robotSim\\${wpi.platforms.desktop}\\debug\\lib")
 }
 
 task moveBackgrounds2Build(type:Copy) {
