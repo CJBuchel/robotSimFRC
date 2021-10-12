@@ -81,7 +81,7 @@ task buildUnixMac(type:Exec) {
 	println "Building project..."
 	doFirst {
 		if (isFamily(FAMILY_MAC)) {
-			commnadLine 'chmod', '+x', 'macExportPath.sh'
+			commandLine 'chmod', '+x', 'macExportPath.sh'
 			commandLine '/bin/bash', 'macExportPath.sh'
 		}
 		commandLine 'make'
