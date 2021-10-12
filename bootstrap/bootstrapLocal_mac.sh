@@ -49,8 +49,8 @@ export PATH="/usr/local/opt/python/libexec/bin:$PATH"
 # Install virtual environment
 pip install virtualenv virtualenvwrapper
 echo "# Virtual Environment Wrapper"
-echo "VIRTUALENVWRAPPER_PYTHON=/usr/local/bin/python2" >> ~/.bash_profile
-echo "source /usr/local/bin/virtualenvwrapper.sh" >> ~/.bash_profile
+echo "VIRTUALENVWRAPPER_PYTHON=/usr/local/bin/python2" >> ~/.bashrc
+echo "source /usr/local/bin/virtualenvwrapper.sh" >> ~/.bashrc
 source ~/.bash_profile
 
 ############ For Python 2 ############
