@@ -73,14 +73,6 @@ task cleanUnixMac(type:Exec) {
 	commandLine 'make', 'clean'
 }
 
-task exportPathMac(type:Exec) {
-	workingDir "sim/"
-	doFirst {
-		commandLine 'chmod', '+x', 'macExportPath.sh'
-		commandLine '/bin/bash', 'macExportPath.sh'
-	}
-}
-
 task buildUnixMac(type:Exec) {
 	description "Builds program using makefile"
 	workingDir "sim/"
@@ -108,9 +100,6 @@ if (hasProperty("windows") || isFamily(FAMILY_WINDOWS)) {
 
 	// UNIX/MAC
 } else if (isFamily(FAMILY_UNIX) || isFamily(FAMILY_MAC)) {
-	if (isFamily(FAMILY_MAC)) {
-		buildUnixMac.dependsOn(exportPathMac)
-	}
 	build.finalizedBy(buildUnixMac)
 	buildUnixMac.finalizedBy(moveBackgrounds2Build)
 	runUnixMac.dependsOn(buildUnixMac)
