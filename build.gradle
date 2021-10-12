@@ -79,6 +79,10 @@ task buildUnixMac(type:Exec) {
 	workingDir "sim/"
 
 	println "Building project..."
+	if (isFamily(FAMILY_MAC)) {
+		commandLine 'export', 'PKG_CONFIG_PATH="/usr/local/opt/opencv@4/lib/pkgconfig"'
+		commandLine 'export', 'PKG_CONFIG_PATH="/usr/local/opt/opencv@/lib/pkgconfig"'
+	}
 	commandLine 'make'
 }
 
