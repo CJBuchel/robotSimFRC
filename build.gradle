@@ -115,5 +115,5 @@ if (hasProperty("windows") || isFamily(FAMILY_WINDOWS)) {
 
 
 wrapper {
-	gradleVersion = '6.0'
+	gradleVersion = '6.8'
 }
