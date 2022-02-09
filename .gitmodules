@@ -1,0 +1,3 @@
+[submodule "Trajectory-Utilities"]
+	path = Trajectory-Utilities
+	url = https://github.com/A-Loose-Screw/Trajectory-Utilities.git

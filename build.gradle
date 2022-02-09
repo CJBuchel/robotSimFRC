@@ -1,119 +1,143 @@
 import static org.apache.tools.ant.taskdefs.condition.Os.*
 
 plugins {
-	id "edu.wpi.first.GradleRIO" version "2021.3.1"
-	// id "google-test-test-suite"
-	id "groovy"
-	id "cpp"
+  id "edu.wpi.first.GradleRIO" version "2021.3.1"
+  // id "google-test-test-suite"
+  id "groovy"
+  id "cpp"
 }
 
 def windows = false
 def installDir = "install\\robotSim\\debug\\lib"
 
 model {
-	components {
-		robotSim(NativeExecutableSpec) {
+  components {
+    trajectoryUtilities(NativeLibrarySpec) {
+      if (windows) {
+        println "Windows build..."
+      } else {
+        return
+      }
 
-			if (windows) {
-				println "Windows build..."
-			} else {
-				return
-			}
+      targetPlatform wpi.platforms.desktop
+      targetPlatform wpi.platforms.roborio // toolchains are funky
 
-			targetPlatform wpi.platforms.desktop
-			targetPlatform wpi.platforms.roborio // toolchains are funky
+      sources.cpp {
+        exportedHeaders {
+          srcDir 'Trajectory-Utils/app/src/main/headers'
+        }
+      }
 
-			sources.cpp {
-				source {
-					srcDir 'sim/libs/main/cpp'
-					srcDir 'sim/src/cpp'
-					include '**/*.cpp', '**/*.cc'
-				}
-				exportedHeaders {
-					srcDir 'sim/libs/main/include'
-					srcDir 'sim/src/include'
-				}
-			}
+      binaries.all {
+        if (targetPlatform.name == wpi.platforms.desktop) {
+          cppCompiler.define '__DESKTOP__'
+        }
+      }
+    }
 
-			binaries.all {
-				if (targetPlatform.name == wpi.platforms.desktop) {
-					cppCompiler.define '__DESKTOP__'
-				}
-			}
+    robotSim(NativeExecutableSpec) {
+      if (windows) {
+        println "Windows build..."
+      } else {
+        return
+      }
 
-			wpi.deps.wpilib(it)
-			wpi.deps.googleTest(it)
-			wpi.deps.vendor.cpp(it)
-		}
-	}
+      targetPlatform wpi.platforms.desktop
+      targetPlatform wpi.platforms.roborio // toolchains are funky
+
+      sources.cpp {
+        source {
+          srcDir 'sim/libs/main/cpp'
+          srcDir 'sim/src/cpp'
+          include '**/*.cpp', '**/*.cc'
+        }
+        exportedHeaders {
+          srcDir 'sim/libs/main/include'
+          srcDir 'sim/src/include'
+        }
+      }
+
+      binaries.all {
+        if (targetPlatform.name == wpi.platforms.desktop) {
+          cppCompiler.define '__DESKTOP__'
+        }
+
+        lib library: "trajectoryUtilities"
+      }
+
+      wpi.deps.wpilib(it)
+      wpi.deps.googleTest(it)
+      wpi.deps.vendor.cpp(it)
+    }
+  }
 }
 
 task moveBackgrounds2Debug(type:Copy) {
-	from "background_images"
-	include "*.png"
-	into layout.buildDirectory.dir("install\\robotSim\\${wpi.platforms.desktop}\\debug\\lib")
+  from "background_images"
+  include "*.png"
+  into layout.buildDirectory.dir("install\\robotSim\\${wpi.platforms.desktop}\\debug\\lib")
 }
 
 task moveBackgrounds2Release(type:Copy) {
-	from "background_images"
-	include "*.png"
-	into layout.buildDirectory.dir("install\\robotSim\\${wpi.platforms.desktop}\\debug\\lib")
+  from "background_images"
+  include "*.png"
+  into layout.buildDirectory.dir("install\\robotSim\\${wpi.platforms.desktop}\\debug\\lib")
 }
 
 task moveBackgrounds2Build(type:Copy) {
-	from "background_images"
-	include "*.png"
-	into "sim/build/"
+  from "background_images"
+  include "*.png"
+  into "sim/build/"
 }
 
 task cleanUnixMac(type:Exec) {
-	description "Clean build dir for Unix and Mac"
-	workingDir "sim/"
+  description "Clean build dir for Unix and Mac"
+  workingDir "sim/"
 
-	commandLine 'make', 'clean'
+  commandLine 'make', 'clean'
 }
 
 task buildUnixMac(type:Exec) {
-	description "Builds program using makefile"
-	workingDir "sim/"
+  description "Builds program using makefile"
+  workingDir "sim/"
 
-	println "Building project..."
-	commandLine 'make'
+  println "Building project..."
+  commandLine 'make'
 }
 
 task runUnixMac(type:Exec) {
-	description "Run program previously built using makefile"
-	workingDir "sim/build"
-	commandLine './sim'
+  description "Run program previously built using makefile"
+  workingDir "sim/build"
+  commandLine './sim'
 }
 
 
 // WINDOWS
 if (hasProperty("windows") || isFamily(FAMILY_WINDOWS)) {
-	windows = true
-	task SIM(dependsOn: "build")
-	SIM.dependsOn("installRobotSim${wpi.platforms.desktop.capitalize()}DebugExecutable")
+  windows = true
+  task SIM(dependsOn: "build")
+  SIM.dependsOn("installRobotSim${wpi.platforms.desktop.capitalize()}DebugExecutable")
 
-	SIM.finalizedBy(moveBackgrounds2Debug)
-	SIM.finalizedBy(moveBackgrounds2Release)
-	SIM.finalizedBy("simulateRobotSim${wpi.platforms.desktop.capitalize()}DebugExecutable")
+  SIM.finalizedBy(moveBackgrounds2Debug)
+  SIM.finalizedBy(moveBackgrounds2Release)
+  SIM.finalizedBy("simulateRobotSim${wpi.platforms.desktop.capitalize()}DebugExecutable")
 
-	// UNIX/MAC
+  // UNIX/MAC
 } else if (isFamily(FAMILY_UNIX) || isFamily(FAMILY_MAC)) {
-	build.finalizedBy(buildUnixMac)
-	buildUnixMac.finalizedBy(moveBackgrounds2Build)
-	runUnixMac.dependsOn(buildUnixMac)
-	task SIM(dependsOn: "runUnixMac")
+  build.finalizedBy(buildUnixMac)
+  buildUnixMac.finalizedBy(moveBackgrounds2Build)
+  runUnixMac.dependsOn(buildUnixMac)
+  task SIM(dependsOn: "runUnixMac")
 
-	clean.dependsOn(cleanUnixMac)
+  clean.dependsOn(cleanUnixMac)
 
 
-	// UNKNOWN
+  // UNKNOWN
 } else {
-	ant.fail("Unknown platform detected")
+  ant.fail("Unknown platform detected")
 }
 
 
 wrapper {
-	gradleVersion = '6.0'
+  gradleVersion = '6.0'
 }
