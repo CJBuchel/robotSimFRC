@@ -24,7 +24,7 @@ model {
 
       sources.cpp {
         exportedHeaders {
-          srcDir 'Trajectory-Utils/app/src/main/headers'
+          srcDir 'Trajectory-Utilities/app/src/main/headers'
         }
       }
 
