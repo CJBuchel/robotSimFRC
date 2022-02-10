@@ -1,7 +1,7 @@
 import static org.apache.tools.ant.taskdefs.condition.Os.*
 
 plugins {
-  id "edu.wpi.first.GradleRIO" version "2021.3.1"
+  id "edu.wpi.first.GradleRIO" version "2022.3.1"
   // id "google-test-test-suite"
   id "groovy"
   id "cpp"
@@ -24,7 +24,7 @@ model {
 
       sources.cpp {
         exportedHeaders {
-          srcDir 'Trajectory-Utilities/app/src/main/headers'
+          srcDir 'Trajectory-Utilities/lib/src/main/public'
         }
       }
 
@@ -65,9 +65,13 @@ model {
         lib library: "trajectoryUtilities"
       }
 
-      wpi.deps.wpilib(it)
-      wpi.deps.googleTest(it)
-      wpi.deps.vendor.cpp(it)
+      wpi.cpp.enableExternalTasks(it)
+
+      // Enable simulation for this component
+      wpi.sim.enable(it)
+      // Defining my dependencies. In this case, WPILib (+ friends), and vendor libraries.
+      wpi.cpp.vendor.cpp(it)
+      wpi.cpp.deps.wpilib(it)
     }
   }
 }
@@ -139,5 +143,5 @@ if (hasProperty("windows") || isFamily(FAMILY_WINDOWS)) {
 
 
 wrapper {
-  gradleVersion = '6.0'
+  gradleVersion = '7.3.3'
 }
